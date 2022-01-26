@@ -1,0 +1,5 @@
+Make it so that the quick order list displays the actual server number for each entry
+
+Make it so that the on the quick order list, clicking an entry will open a modal box displaying more info
+
+Join - on the server, platoon, clicking discord will join an according discord channel
