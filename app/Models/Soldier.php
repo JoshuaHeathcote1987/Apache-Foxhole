@@ -31,7 +31,7 @@ class Soldier extends Model
         return $this->belongsTo(Squad::class);
     }
 
-    public function votee()
+    public function vote()
     {
         return $this->hasMany(Vote::class);
     }

@@ -27,9 +27,6 @@ class VoteController extends Controller
      */
     public function index()
     {
-        // You will have to rethink this because even if you fix it here you will have problems down below
-        // You will have to make a DB for Squad_Leaders, Platoon_Leaders, and Company_Leaders
-        // You will have to look into Eloquent to see if this can be done better using ->count() instead of the crazy mess you used
 
         $companies = Company::all();
         $platoons = Platoon::all();
@@ -37,43 +34,65 @@ class VoteController extends Controller
         $soldiers = Soldier::all();
         $votes = Vote::all();
 
-        $tallied_squad = collect();
-        $tallied_platoon = collect();
-        $tallied_company = collect();
+        $tallied_squads = collect();
+        $tallied_platoons = collect();
+        $tallied_companys = collect();
 
         $count = 0;
 
-        // Count the votes
+        // Counts each votes and tallies it
         foreach ($soldiers as $key => $soldier) {
             $count = $votes->where('category', '=', 'squad')
                 ->where('voted_soldier_id', '=', $soldier->id)
                 ->count();
-            $tallied_squad->push(['squad_id' => $soldier->squad_id, 'soldier_id' => $soldier->id, 'vote_count' => $count]);
+            $tallied_squads->push(['squad_id' => $soldier->squad_id, 'soldier_id' => $soldier->id, 'vote_count' => $count]);
             $count = $votes->where('category', '=', 'platoon')
                 ->where('voted_soldier_id', '=', $soldier->id)
                 ->count();
-            $tallied_platoon->push(['squad_id' => $soldier->squad_id, 'soldier_id' => $soldier->id, 'vote_count' => $count]);
+            $tallied_platoons->push(['squad_id' => $soldier->squad_id, 'soldier_id' => $soldier->id, 'vote_count' => $count]);
             $count = $votes->where('category', '=', 'company')
                 ->where('voted_soldier_id', '=', $soldier->id)
                 ->count();
-            $tallied_company->push(['squad_id' => $soldier->squad_id, 'soldier_id' => $soldier->id, 'vote_count' => $count]);
+            $tallied_companys->push(['squad_id' => $soldier->squad_id, 'soldier_id' => $soldier->id, 'vote_count' => $count]);
         }
 
-        $max_squad = collect();
+        $max_squads = collect();
         $max_platoon = collect();
         $max_company = collect();
 
+        // Max number for the percentage calculation
+
         foreach ($squads as $key => $squad) {
-            $max = $tallied_squad->where('squad_id', '=', $squad->id)->max('vote_count');
-            $max_squad->push(['squad->id' => $squad->id, 'max' => $max]);
+            $max = $tallied_squads->where('squad_id', '=', $squad->id)->max('vote_count');
+            $max_squads->push(['squad_id' => $squad->id, 'max' => $max]);
         }
 
-        $percentage_squad = collect();
-        $percentage_platoon = collect();
-        $percentage_company = collect();
-        
-        // work out the percentage to each soldier
-        
+        foreach ($platoons as $key => $platoon) {
+            $max = $tallied_platoons->where('platoon_id', '=', $platoon->id)->max('vote_count');
+            $max_platoon->push(['platoon_id' => $platoon->id, 'max' => $max]);
+        }
+
+        $percentage_squads = collect();
+        $percentage_platoons = collect();
+        $percentage_companys = collect();
+      
+        // Percentage
+        foreach ($max_squads as $key => $max_squad) {
+            foreach ($tallied_squads as $key => $tallied_squad) {
+                if ($max_squad['max'] != null) {
+                    if ($max_squad['squad_id'] == $tallied_squad['squad_id']) {
+                        $percentage = ($tallied_squad['vote_count'] / $max_squad['max']) * 100;
+                        $percentage_squads->push(['squad_id' => $max_squad['squad_id'], 'soldier_id' => $tallied_squad['soldier_id'], 'percentage' => $percentage]);
+                    }
+                    
+                } 
+            }
+        }
+
+        // You need one for platoons and for companies. You also may need to look further up and for the max, 
+        // stick the max guy for each squad in the platoons table, check the max for platoons and stick him in 
+        // the company table.
+
         
         $data = ['companies' => $companies, 'platoons' => $platoons, 'squads' => $squads, 'soldiers' => $soldiers, 'votes' => $votes];
 
