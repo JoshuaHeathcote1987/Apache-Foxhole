@@ -51,70 +51,60 @@
     @foreach ($data['platoons'] as $platoon)
         @if ($platoon->company_id == $company->id)
             <div class="accordion-item">
-                <h2 class="accordion-header" id="panelsStayOpen-heading{{ $platoon->id * 2 }}">
+                <h2 class="accordion-header" id="panelsStayOpen-heading{{ $platoon->id * 5 }}">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#panelsStayOpen-collapse{{ $platoon->id * 2 }}" aria-expanded="false"
-                        aria-controls="panelsStayOpen-collapse{{ $platoon->id * 2 }}">
+                        data-bs-target="#panelsStayOpen-collapse{{ $platoon->id * 5 }}" aria-expanded="false"
+                        aria-controls="panelsStayOpen-collapse{{ $platoon->id * 5 }}">
                         {{ $platoon->name }}
                     </button>
                 </h2>
-                <div id="panelsStayOpen-collapse{{ $platoon->id * 2 }}" class="accordion-collapse collapse"
-                    aria-labelledby="panelsStayOpen-heading{{ $platoon->id * 2 }}">
+                <div id="panelsStayOpen-collapse{{ $platoon->id * 5 }}" class="accordion-collapse collapse"
+                    aria-labelledby="panelsStayOpen-heading{{ $platoon->id * 5 }}">
                     <div class="accordion-body">
-                        <div class="accordion" id="accordionExample{{ $platoon->id * 2 }}">
+                        <div class="accordion" id="accordionExample{{ $platoon->id * 5 }}">
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingTwo{{ $platoon->id * 2 }}">
+                                <h2 class="accordion-header" id="headingTwo{{ $platoon->id * 5 }}">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseTwo{{ $platoon->id * 2 }}" aria-expanded="false"
+                                        data-bs-target="#collapseTwo{{ $platoon->id * 5 }}" aria-expanded="false"
                                         aria-controls="collapseTwo">
                                         Squad Leaders
                                     </button>
                                 </h2>
-                                <div id="collapseTwo{{ $platoon->id * 2 }}" class="accordion-collapse collapse"
+                                <div id="collapseTwo{{ $platoon->id * 5 }}" class="accordion-collapse collapse"
                                     aria-labelledby="headingTwo"
-                                    data-bs-parent="#accordionExample{{ $platoon->id * 2 }}">
+                                    data-bs-parent="#accordionExample{{ $platoon->id * 5 }}">
                                     <div class="accordion-body">
                                         <table class="table">
                                             <thead>
                                                 <tr>
+                                                    <th scope="col">#</th>
                                                     <th scope="col">Game Name</th>
                                                     <th scope="col">Squad</th>
                                                     <th scope="col">Vote</th>
                                                     <th scope="col">Score</th>
                                                 </tr>
                                             </thead>
-                                            @foreach ($data['squads'] as $squad)
-                                                @foreach ($data['squad_highests'] as $squad_highest)
-                                                    @if ($squad->platoon_id == $platoon->id)
-                                                        @if ($squad_highest['squad_id'] == $squad->id)
-                                                            <tbody>
-                                                                <td>{{ $squad_highest['game_name'] }}</td>
-                                                                <td>{{ $squad->id }}</td>
-                                                                <td>
-                                                                    <form action="{{ route('vote.store') }}"
-                                                                        method="post">
-                                                                        @csrf
-                                                                        <input type="hidden" name="category" value="1">
-                                                                        <input type="hidden" name="voting_soldier_id"
-                                                                            value="{{ \Auth::user()->id }}">
-                                                                        <input type="hidden" name="voted_soldier_id"
-                                                                            value="{{ $squad_highest['soldier_id'] }}">
-                                                                        <button type="submit"
-                                                                            class="btn btn-success">🗳️</button>
-                                                                    </form>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar w-75"
-                                                                            role="progressbar" aria-valuenow="75"
-                                                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                                                    </div>
-                                                                </td>
-                                                            </tbody>
-                                                        @endif
-                                                    @endif
-                                                @endforeach
-                                            @endforeach
+                                            <tbody>
+                                                <td>1</td>
+                                                <td>Killer Joe</td>
+                                                <td>Infantry</td>
+                                                <td>
+                                                    <form action="{{ route('vote.store') }}"
+                                                        method="post">
+                                                        @csrf
+                                                        
+                                                        <button type="submit"
+                                                            class="btn btn-success">🗳️</button>
+                                                    </form>
+                                                </td>
+                                                <td>
+                                                    <div class="progress">
+                                                        <div class="progress-bar w-75"
+                                                            role="progressbar" aria-valuenow="75"
+                                                            aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </td>
+                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -170,8 +160,6 @@
                                                                         method="post">
                                                                         @csrf
                                                                         <input type="hidden" name="category" value="2">
-                                                                        <input type="hidden" name="voting_soldier_id"
-                                                                            value="{{ \Auth::user()->id }}">
                                                                         <input type="hidden" name="voted_soldier_id"
                                                                             value="{{ $soldier->id }}">
                                                                         <button type="submit"
@@ -180,14 +168,12 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="progress mt-1" style="height: 20px;">
-                                                                        @if ($soldier->id == $data['percentages'][$key]['soldier_id'])
-                                                                            <div class="progress-bar"
-                                                                                role="progressbar"
-                                                                                style="width: {{ $data['percentages'][$key]['percentage'] }}%;"
-                                                                                aria-valuenow="70" aria-valuemin="0"
-                                                                                aria-valuemax="100">
-                                                                            </div>
-                                                                        @endif
+                                                                        <div class="progress-bar"
+                                                                            role="progressbar"
+                                                                            style="width: 56%;"
+                                                                            aria-valuenow="70" aria-valuemin="0"
+                                                                            aria-valuemax="100">
+                                                                        </div>
                                                                     </div>
                                                                 </td>
                                                             </tr>

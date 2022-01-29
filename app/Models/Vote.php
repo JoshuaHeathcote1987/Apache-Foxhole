@@ -14,7 +14,7 @@ class Vote extends Model
     protected $fillable = [
         'category',
         'user_id',
-        'voting_soldier_id',
+        'soldier_id',
         'voted_soldier_id',
     ];
 

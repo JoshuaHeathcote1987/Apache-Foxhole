@@ -62,7 +62,7 @@ class JoinController extends Controller
         );
      
         $vote = Vote::updateOrCreate(
-            ['category' => 'squad', 'voting_soldier_id' => $soldier->id],
+            ['category' => 'squad', 'soldier_id' => $soldier->id],
             ['user_id' => Auth::id(), 'voted_soldier_id' => $soldier->id],
         );
 

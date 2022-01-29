@@ -37,17 +37,42 @@ class VoteController extends Controller
         $soldiers = Soldier::all();
         $votes = Vote::all();
 
-        
+        $tallied_squad = collect();
+        $tallied_platoon = collect();
+        $tallied_company = collect();
+
+        $count = 0;
 
         // Count the votes
-        
+        foreach ($soldiers as $key => $soldier) {
+            $count = $votes->where('category', '=', 'squad')
+                ->where('voted_soldier_id', '=', $soldier->id)
+                ->count();
+            $tallied_squad->push(['squad_id' => $soldier->squad_id, 'soldier_id' => $soldier->id, 'vote_count' => $count]);
+            $count = $votes->where('category', '=', 'platoon')
+                ->where('voted_soldier_id', '=', $soldier->id)
+                ->count();
+            $tallied_platoon->push(['squad_id' => $soldier->squad_id, 'soldier_id' => $soldier->id, 'vote_count' => $count]);
+            $count = $votes->where('category', '=', 'company')
+                ->where('voted_soldier_id', '=', $soldier->id)
+                ->count();
+            $tallied_company->push(['squad_id' => $soldier->squad_id, 'soldier_id' => $soldier->id, 'vote_count' => $count]);
+        }
 
-        // Find the highest value
+        $max_squad = collect();
+        $max_platoon = collect();
+        $max_company = collect();
 
+        foreach ($squads as $key => $squad) {
+            $max = $tallied_squad->where('squad_id', '=', $squad->id)->max('vote_count');
+            $max_squad->push(['squad->id' => $squad->id, 'max' => $max]);
+        }
 
-        // Find the percentage
+        $percentage_squad = collect();
+        $percentage_platoon = collect();
+        $percentage_company = collect();
         
-        
+        // work out the percentage to each soldier
         
         
         $data = ['companies' => $companies, 'platoons' => $platoons, 'squads' => $squads, 'soldiers' => $soldiers, 'votes' => $votes];
@@ -77,7 +102,6 @@ class VoteController extends Controller
     {  
         $category = self::CATEGORY[$request->category];
 
-        $voting_soldier_id = $request->voting_soldier_id;
         $voted_soldier_id = $request->voted_soldier_id;
 
         $voting_soldier = Soldier::where('user_id', '=', Auth::user()->id)->first();
@@ -90,19 +114,19 @@ class VoteController extends Controller
         if ($voting_soldier->squad_id == $voted_soldier->squad_id) {
             if (!is_null($voting_soldier)) {
                 $vote = Vote::where('category', '=', $category)
-                            ->where('voting_soldier_id', '=', $voting_soldier_id)
+                            ->where('soldier_id', '=', $voting_soldier->id)
                             ->first();
     
                 if (is_null($vote)) {
                     $voted = Vote::create([
                         'category' => $category,
                         'user_id' => Auth::user()->id,
-                        'voting_soldier_id' => $voting_soldier_id,
+                        'soldier_id' => $voting_soldier->id,
                         'voted_soldier_id' => $voted_soldier_id,
                     ]);
                 } else {
                     $vote->category = $category;
-                    $vote->voting_soldier_id = $voting_soldier_id;
+                    $vote->soldier_id = $voting_soldier->id;
                     $vote->voted_soldier_id = $voted_soldier_id;
                     $vote->save();
                 }
