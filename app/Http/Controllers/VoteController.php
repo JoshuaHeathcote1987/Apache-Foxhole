@@ -7,9 +7,11 @@ use App\Models\Company;
 use App\Models\Platoon;
 use App\Models\Squad;
 use App\Models\Soldier;
+use App\Models\User;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 use Auth;
 
@@ -25,66 +27,32 @@ class VoteController extends Controller
      */
     public function index()
     {
-        $companies = Company::get();
-        $platoons = Platoon::get();
-        $squads = Squad::get();
-        $soldiers = Soldier::get();
-        $votes = Vote::get();
+        // You will have to rethink this because even if you fix it here you will have problems down below
+        // You will have to make a DB for Squad_Leaders, Platoon_Leaders, and Company_Leaders
+        // You will have to look into Eloquent to see if this can be done better using ->count() instead of the crazy mess you used
+
+        $companies = Company::all();
+        $platoons = Platoon::all();
+        $squads = Squad::all();
+        $soldiers = Soldier::all();
+        $votes = Vote::all();
+
+        
+
+        // Count the votes
+        
+
+        // Find the highest value
 
 
-        $tallys = [];
-        $percentages = [];
-        $squad_highest_numbers = [];
-        $high = 0;
+        // Find the percentage
+        
+        
+        
+        
+        $data = ['companies' => $companies, 'platoons' => $platoons, 'squads' => $squads, 'soldiers' => $soldiers, 'votes' => $votes];
 
-        foreach ($soldiers as $soldier) {
-            $amount = 0;
-            foreach ($votes as $vote) {
-                if ($soldier->id == $vote->voted_soldier_id) {
-                    $amount++;
-                }
-            }
-            array_push($tallys, ['soldier_id' => $soldier->id, 'game_name' => $soldier->game_name,'squad_id' => $soldier->squad_id, 'amount' => $amount]);
-        }
-
-        foreach ($squads as $key => $squad) {
-            foreach ($tallys as $tally) {
-                $next = $tally['amount'];
-
-                if ($squad->id == $tally['squad_id'] && $next > $high) {
-                    $high = $next;
-                    $squad_highest_numbers[$key] = ['soldier_id' => $tally['soldier_id'], 'game_name' => $tally['game_name'], 'squad_id' => $squad->id, 'high' => $high];
-                    $top_soldier = Squad::where('id', '=', $squad->id)->first();
-                    $top_soldier->soldier_id = $tally['soldier_id'];
-                    $top_soldier->save();
-                }
-            }
-            $next = 0;
-            $high = 0;
-        }
-
-        foreach ($squads as $squad) 
-        {
-            foreach ($tallys as $tally) 
-            {
-                foreach ($squad_highest_numbers as $squad_highest_number) 
-                {
-                    if ($squad->id == $tally['squad_id'] && $squad->id == $squad_highest_number['squad_id'] && $squad_highest_number['high'] != 0) 
-                    {
-                        $percentage = ($tally['amount'] / $squad_highest_number['high']) * 100;
-                        array_push($percentages, ['squad_id' => $squad->id, 'soldier_id' => $tally['soldier_id'], 'percentage' => $percentage]);
-                    }
-                }
-            }
-        }
-
-
-
-        usort($percentages, function ($a, $b) {
-            return $a['soldier_id'] <=> $b['soldier_id'];
-        });
-
-        $data = collect(['companies' => $companies, 'platoons' => $platoons, 'squads' => $squads, 'soldiers' => $soldiers, 'percentages' => $percentages, 'squad_highests' => $squad_highest_numbers]); 
+  
 
         return view('pages.vote')->with('data', $data);
     }
@@ -108,10 +76,11 @@ class VoteController extends Controller
     public function store(Request $request)
     {  
         $category = self::CATEGORY[$request->category];
+
         $voting_soldier_id = $request->voting_soldier_id;
         $voted_soldier_id = $request->voted_soldier_id;
 
-        $voting_soldier = Soldier::where('user_id', '=', \Auth::user()->id)->first();
+        $voting_soldier = Soldier::where('user_id', '=', Auth::user()->id)->first();
         $voted_soldier = Soldier::where('id', '=', $voted_soldier_id)->first();
 
         if ($voting_soldier == null) {
@@ -127,6 +96,7 @@ class VoteController extends Controller
                 if (is_null($vote)) {
                     $voted = Vote::create([
                         'category' => $category,
+                        'user_id' => Auth::user()->id,
                         'voting_soldier_id' => $voting_soldier_id,
                         'voted_soldier_id' => $voted_soldier_id,
                     ]);
@@ -143,6 +113,7 @@ class VoteController extends Controller
         } else {
             return redirect()->route('vote.index')->with('status', 'Vote failed! You can only vote for a soldier in your squad.');
         }
+
     }
 
     /**

@@ -17,4 +17,14 @@ class Vote extends Model
         'voting_soldier_id',
         'voted_soldier_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function soldier()
+    {
+        return $this->belongsTo(Soldier::class);
+    }
 }

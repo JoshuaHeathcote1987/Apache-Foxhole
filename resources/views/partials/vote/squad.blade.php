@@ -67,7 +67,7 @@
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseTwo{{ $platoon->id * 2 }}" aria-expanded="false"
                                         aria-controls="collapseTwo">
-                                        Squad Leader
+                                        Squad Leaders
                                     </button>
                                 </h2>
                                 <div id="collapseTwo{{ $platoon->id * 2 }}" class="accordion-collapse collapse"
@@ -88,12 +88,28 @@
                                                     @if ($squad->platoon_id == $platoon->id)
                                                         @if ($squad_highest['squad_id'] == $squad->id)
                                                             <tbody>
-
                                                                 <td>{{ $squad_highest['game_name'] }}</td>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-
+                                                                <td>{{ $squad->id }}</td>
+                                                                <td>
+                                                                    <form action="{{ route('vote.store') }}"
+                                                                        method="post">
+                                                                        @csrf
+                                                                        <input type="hidden" name="category" value="1">
+                                                                        <input type="hidden" name="voting_soldier_id"
+                                                                            value="{{ \Auth::user()->id }}">
+                                                                        <input type="hidden" name="voted_soldier_id"
+                                                                            value="{{ $squad_highest['soldier_id'] }}">
+                                                                        <button type="submit"
+                                                                            class="btn btn-success">🗳️</button>
+                                                                    </form>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar w-75"
+                                                                            role="progressbar" aria-valuenow="75"
+                                                                            aria-valuemin="0" aria-valuemax="100"></div>
+                                                                    </div>
+                                                                </td>
                                                             </tbody>
                                                         @endif
                                                     @endif

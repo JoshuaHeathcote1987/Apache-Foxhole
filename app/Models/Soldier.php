@@ -20,4 +20,19 @@ class Soldier extends Model
         'facebook',
         'twitch',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function squad()
+    {
+        return $this->belongsTo(Squad::class);
+    }
+
+    public function votee()
+    {
+        return $this->hasMany(Vote::class);
+    }
 }

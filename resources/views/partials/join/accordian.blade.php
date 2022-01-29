@@ -35,7 +35,7 @@
                                                             @csrf
                                                             <input type="hidden" name="squad_id"
                                                                 value="{{ $squad->id }}">
-                                                            <button class="no-button" type="submit">Join
+                                                            <button class="no-button" type="submit">🤺 Join
                                                                 Squad</button>
                                                         </form>
                                                     </a>
@@ -43,21 +43,21 @@
                                                 <li class="nav-item">
                                                     <a class="nav-link" href="#">
                                                         <button class="no-button">
-                                                            <s>Join Discord</s>
+                                                            🤙 Join Discord
                                                         </button>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link" href="#">
                                                         <button class="no-button">
-                                                            <s>Commend Squad?</s>
+                                                            👍 Commend Squad?
                                                         </button>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link" href="#">
                                                         <button class="no-button">
-                                                            <s>Criticize Squad?</s>
+                                                            👎 Criticize Squad?
                                                         </button>
                                                     </a>
                                                 </li>

@@ -42,4 +42,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function soldier()
+    {
+        return $this->belongsTo(Soldier::class);
+    }
+
+    public function vote()
+    {
+        return $this->hasMany(Vote::class);
+    }
 }

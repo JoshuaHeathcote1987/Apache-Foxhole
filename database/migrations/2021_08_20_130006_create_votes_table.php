@@ -17,7 +17,7 @@ class CreateVotesTable extends Migration
             $table->id();
             $table->string('category');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('voting_soldier_id');
+            $table->unsignedBigInteger('soldier_id');
             $table->unsignedBigInteger('voted_soldier_id');
             $table->timestamps();
         });
