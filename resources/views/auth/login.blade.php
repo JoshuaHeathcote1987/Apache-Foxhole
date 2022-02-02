@@ -27,7 +27,7 @@
                 <span class="text-danger">@error('password') {{ $message }} @enderror</span>
             </div>
             <button type="submit" class="btn btn-success mt-5 w-100" style="height: 50px;">Sign In</button>
-            <a href="">I don't have an account!</a>
+            <a href="" style="color: black">I don't have an account!</a>
         </form>
     </div>
 @endsection

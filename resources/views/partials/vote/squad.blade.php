@@ -13,30 +13,32 @@
             <div class="accordion-body">
                 <table class="table table-striped">
                     <thead>
+                    <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
+                            <th scope="col">Game Name</th>
+                            <th scope="col">Squad</th>
+                            <th scope="col">Vote</th>
+                            <th scope="col">Score</th>
                         </tr>
                     </thead>
                     <tbody>
+                        
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td colspan="2">Larry the Bird</td>
-                            <td>@twitter</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                     
+                            </td>
+                            <td>
+                                <div class="progress-bar"
+                                    role="progressbar"
+                                    style="width: 45%;"
+                                    aria-valuenow="70" aria-valuemin="0"
+                                    aria-valuemax="100">
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -85,25 +87,11 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <td>1</td>
-                                                <td>Killer Joe</td>
-                                                <td>Infantry</td>
-                                                <td>
-                                                    <form action="{{ route('vote.store') }}"
-                                                        method="post">
-                                                        @csrf
-                                                        
-                                                        <button type="submit"
-                                                            class="btn btn-success">🗳️</button>
-                                                    </form>
-                                                </td>
-                                                <td>
-                                                    <div class="progress">
-                                                        <div class="progress-bar w-75"
-                                                            role="progressbar" aria-valuenow="75"
-                                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </td>
+                                                @foreach ($data['soldiers'] as $key => $soldier)
+                                                        @if ($soldier->squad->platoon->id == $platoon->id)
+                                                            
+                                                        @endif
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -168,12 +156,16 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="progress mt-1" style="height: 20px;">
-                                                                        <div class="progress-bar"
-                                                                            role="progressbar"
-                                                                            style="width: 56%;"
-                                                                            aria-valuenow="70" aria-valuemin="0"
-                                                                            aria-valuemax="100">
-                                                                        </div>
+                                                                        @if ($data['percentage_squads'][$key]['squad_id'] == $squad->id)
+                                                                            @if ($data['percentage_squads'][$key]['soldier_id'] == $soldier->id)
+                                                                                <div class="progress-bar"
+                                                                                    role="progressbar"
+                                                                                    style="width: {{ $data['percentage_squads'][$key]['percentage'] }}%;"
+                                                                                    aria-valuenow="70" aria-valuemin="0"
+                                                                                    aria-valuemax="100">
+                                                                                </div>
+                                                                            @endif
+                                                                        @endif
                                                                     </div>
                                                                 </td>
                                                             </tr>
