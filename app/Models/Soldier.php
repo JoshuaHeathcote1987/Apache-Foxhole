@@ -23,7 +23,7 @@ class Soldier extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class);
     }
 
     public function squad()
@@ -31,8 +31,13 @@ class Soldier extends Model
         return $this->belongsTo(Squad::class);
     }
 
-    public function vote()
+    public function votes()
     {
-        return $this->hasMany(Vote::class);
+        return $this->hasMany(Vote::class, 'voted_soldier_id');
+    }
+
+    public function percentages()
+    {
+        return $this->hasMany(Percentage::class);
     }
 }

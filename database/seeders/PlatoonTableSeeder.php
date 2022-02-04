@@ -28,7 +28,7 @@ class PlatoonTableSeeder extends Seeder
         for ($i=0; $i < sizeof($platoons); $i++) { 
             DB::table('platoons')->insert([
                 'company_id' => 1,
-                'soldier_id' => 1,
+                'leader_id' => null,
                 'name' => $platoons[$i],
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
@@ -38,7 +38,7 @@ class PlatoonTableSeeder extends Seeder
         for ($i=0; $i < sizeof($platoons); $i++) { 
             DB::table('platoons')->insert([
                 'company_id' => 2,
-                'soldier_id' => 1,
+                'leader_id' => null,
                 'name' => $platoons[$i],
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),

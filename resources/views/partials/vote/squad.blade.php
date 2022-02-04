@@ -1,5 +1,4 @@
 {{-- Company Poll --}}
-
 <div class="accordion" id="accordionExample12345">
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingTwo12345">
@@ -50,8 +49,7 @@
 <hr>
 
 <div class="accordion" id="accordionPanelsStayOpenExample">
-    @foreach ($data['platoons'] as $platoon)
-        @if ($platoon->company_id == $company->id)
+    @foreach ($company['platoons'] as $platoon)
             <div class="accordion-item">
                 <h2 class="accordion-header" id="panelsStayOpen-heading{{ $platoon->id * 5 }}">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -87,12 +85,18 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($data['soldiers'] as $key => $soldier)
-                                                        @if ($soldier->squad->platoon->id == $platoon->id)
-                                                            
-                                                        @endif
+                                                @foreach ($platoon->squads as $squad)
+                                                    @if (isset($squad->leader))
+                                                        <tr>
+                                                            <td>{{ $squad->leader->id }}</td>
+                                                            <td>{{ $squad->leader->game_name }}</td>
+                                                            <td>{{ $squad->name}}</td>
+                                                            <td>button here</td>
+                                                            <td>progress bar here</td>
+                                                        </tr>
+                                                    @endif
                                                 @endforeach
-                                            </tbody>
+                                            </tbody>   
                                         </table>
                                     </div>
                                 </div>
@@ -101,8 +105,7 @@
 
                         <hr>
 
-                        @foreach ($data['squads'] as $squad)
-                            @if ($squad->platoon_id === $platoon->id)
+                        @foreach ($platoon['squads'] as $squad)
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="panelsStayOpen-heading{{ $squad->id * 3 }}"
                                         style="border-top: 1px solid #dfdfdf;">
@@ -128,8 +131,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($data['soldiers'] as $key => $soldier)
-                                                        @if ($soldier->squad_id == $squad->id)
+                                                    @foreach ($squad['soldiers'] as $soldier)
                                                             <tr>
                                                                 <th scope="row">
                                                                     {{ $soldier->id }}
@@ -138,7 +140,7 @@
                                                                     <button class="no-button" type="button"
                                                                         data-bs-toggle="modal"
                                                                         data-bs-target="#readSoldierModal{{ $soldier->id }}">{{ $soldier->game_name }}
-                                                                        @if ($soldier->id == $squad->soldier_id)
+                                                                        @if ($soldier->id == $squad->leader_id)
                                                                             🎖️
                                                                         @endif
                                                                     </button>
@@ -148,6 +150,8 @@
                                                                         method="post">
                                                                         @csrf
                                                                         <input type="hidden" name="category" value="2">
+                                                                        <input type="hidden" name="voting_soldier_id"
+                                                                            value="{{ \Auth::id() }}">
                                                                         <input type="hidden" name="voted_soldier_id"
                                                                             value="{{ $soldier->id }}">
                                                                         <button type="submit"
@@ -155,32 +159,31 @@
                                                                     </form>
                                                                 </td>
                                                                 <td>
-                                                                    <div class="progress mt-1" style="height: 20px;">
-                                                                        @if ($data['percentage_squads'][$key]['squad_id'] == $squad->id)
-                                                                            @if ($data['percentage_squads'][$key]['soldier_id'] == $soldier->id)
+                                                                @if (isset($soldier->percentages))
+                                                                    @foreach ($soldier->percentages as $percentages)
+                                                                        @if ($percentages->category == '3')
+                                                                            <div class="progress mt-1" style="height: 20px;">
                                                                                 <div class="progress-bar"
                                                                                     role="progressbar"
-                                                                                    style="width: {{ $data['percentage_squads'][$key]['percentage'] }}%;"
+                                                                                    style="width: {{ $percentages->percentage }}%;"
                                                                                     aria-valuenow="70" aria-valuemin="0"
                                                                                     aria-valuemax="100">
                                                                                 </div>
-                                                                            @endif
+                                                                            </div>
                                                                         @endif
-                                                                    </div>
+                                                                    @endforeach
+                                                                @endif
                                                                 </td>
-                                                            </tr>
-                                                        @endif
+                                                            </tr>       
                                                     @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
-                            @endif
                         @endforeach
                     </div>
                 </div>
             </div>
-        @endif
     @endforeach
 </div>

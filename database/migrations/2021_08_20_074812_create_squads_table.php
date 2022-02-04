@@ -16,7 +16,7 @@ class CreateSquadsTable extends Migration
         Schema::create('squads', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('platoon_id');
-            $table->unsignedBigInteger('soldier_id')->nullable(); // leader
+            $table->unsignedBigInteger('leader_id')->nullable();
             $table->string('name');
             $table->timestamps();
             $table->foreign('platoon_id')

@@ -41,6 +41,7 @@ class RegisteredUserController extends Controller
         ]);
 
         $user = User::create([
+            'soldier_id' => null,
             'full_name' => $request->full_name,
             'game_name' => $request->game_name,
             'email' => $request->email,

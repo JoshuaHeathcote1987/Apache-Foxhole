@@ -9,6 +9,11 @@ class Squad extends Model
 {
     use HasFactory;
 
+    public function leader()
+    {
+        return $this->hasOne(Soldier::class, 'id', 'leader_id');
+    }
+
     public function soldiers()
     {
         return $this->hasMany(Soldier::class);

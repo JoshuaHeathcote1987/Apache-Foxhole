@@ -30,7 +30,7 @@ class SquadTableSeeder extends Seeder
                 DB::table('squads')->insert([
                     'name' => $squads[$i],
                     'platoon_id' => $index,
-                    'soldier_id' => 0,
+                    'leader_id' => null,
                     'created_at' => \Carbon\Carbon::now(),
                     'updated_at' => \Carbon\Carbon::now(),
                 ]);
@@ -42,7 +42,7 @@ class SquadTableSeeder extends Seeder
                 DB::table('squads')->insert([
                     'name' => $squads[$i],
                     'platoon_id' => $index,
-                    'soldier_id' => 0,
+                    'leader_id' => null,
                     'created_at' => \Carbon\Carbon::now(),
                     'updated_at' => \Carbon\Carbon::now(),
                 ]);

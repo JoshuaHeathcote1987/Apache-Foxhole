@@ -9,6 +9,11 @@ class Company extends Model
 {
     use HasFactory;
 
+    public function leader()
+    {
+        return $this->hasOne(Soldier::class);
+    }
+
     public function platoons()
     {
         return $this->hasMany(Platoon::class);

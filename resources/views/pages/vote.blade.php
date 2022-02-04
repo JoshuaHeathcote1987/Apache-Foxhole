@@ -54,5 +54,5 @@
     </div>
 
     {{-- Modals --}}
-    @include('partials.join.update-soldier')
+    {{-- @include('partials.join.update-soldier') --}}
 @endsection

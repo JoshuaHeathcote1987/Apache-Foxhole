@@ -16,14 +16,14 @@ class CompanyTableSeeder extends Seeder
     {
         DB::table('companies')->insert([
             'name'          => 'Live 1',
-            'soldier_id'    => 1,
+            'leader_id'    => null,
             'created_at'    => \Carbon\Carbon::now(),
             'updated_at'    => \Carbon\Carbon::now(),
         ]);
 
         DB::table('companies')->insert([
             'name' => 'Live 2',
-            'soldier_id' => 1,
+            'leader_id' => null,
             'created_at' => \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
         ]);

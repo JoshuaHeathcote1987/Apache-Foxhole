@@ -12,6 +12,7 @@ use App\Models\Squad;
 use App\Models\Soldier;
 use App\Models\User;
 use App\Models\Vote;
+use App\Models\Percentage;
 
 class JoinController extends Controller
 {
@@ -50,23 +51,100 @@ class JoinController extends Controller
      */
     public function store(Request $request)
     {
+        $user = User::find(\Auth::id());
+
+        // THIS IS THE PROBLEM :: You have a problem where if a squad leader leaves the squad, the squad leader isn't updated in the squad table
+
+        // Check to see if the current soldier change is squad leader.
+        $old_squad_leader_id = $user->soldier->squad->leader_id;
+        if ($user->solider->id == $old_squad_leader_id) {
+            dd('You are here');
+        }
+        // If he is squad leader then perform these actions
+
+        // Delete his percentage
+        // Run tally on the squad that he left
+        // Run max on the squad that he left
+        // Update squad table with the new current squad leader
+        // Run percentage on squad that he left
+        
+
+        
+
+
+
+
+        // Tally, Max, Percentage Calculation
         $soldier = Soldier::updateOrCreate(
             [
-                'user_id' => Auth::id(),
+                'game_name' => $user->game_name,
             ],
             [
                 'squad_id'  => $request->squad_id,
-                'user_id'   => Auth::id(),
-                'game_name' => Auth::user()->game_name,
+                'game_name' => $user->game_name,
             ]
         );
-     
-        $vote = Vote::updateOrCreate(
-            ['category' => 'squad', 'soldier_id' => $soldier->id],
-            ['user_id' => Auth::id(), 'voted_soldier_id' => $soldier->id],
+
+        $user->soldier_id = $soldier->id;
+        $user->save();
+
+        $update = Vote::updateOrCreate(
+            ['category' => 'squad', 'voting_soldier_id' => $user->soldier->id],
+            ['voted_soldier_id' => $user->soldier->id],
         );
 
-        return redirect('join');
+        if ($update) {
+
+            // Tally the Votes
+            $votes = Vote::where('category', '=', 'squad')->get();
+            $soldiers = Soldier::where('squad_id', '=', $soldier->squad_id)->get();
+            
+            $tallied = collect();
+            
+            foreach ($soldiers as $soldier) {
+                $count = $soldier->votes->count();
+                $tallied->push(['soldier' => $soldier, 'count' => $count]);
+            }
+
+            // Max the Votes
+            $max = $tallied->max('count');
+
+            // Now you need to update the squad table with the soldier id to show that he is leader
+            $leader = $tallied->where('count', '=', $max);
+            $leader = $leader->values();
+            $squad_leader = Soldier::find($leader[0]['soldier']['id']);
+            $update_squad = Squad::find($squad_leader->squad_id);
+            $update_squad->leader_id = $squad_leader->id;
+            $update_squad->save();
+
+            $percentages = collect();
+
+            // Find the Percentage and store
+            foreach ($tallied as $tally) {
+                $percentage = ($tally['count'] / $max) * 100;
+                $percentages->push(['soldier_id' => $tally['soldier']['id'], 'category' => 'squad', 'percent' => $percentage, 'count' => $tally['count']]);
+            }
+
+            foreach ($percentages as $percentage) {
+                $update = Percentage::updateOrCreate(
+                    [
+                        'soldier_id' => $percentage['soldier_id'],
+                        'category' => 3,
+                    ],
+                    [
+                        'percentage' => $percentage['percent'],
+                        'count' => $percentage['count'],
+                    ]
+                );
+            }
+
+
+            // READ THIS In the vote and the join section, you have to make it so that all percentage have another vote created for platoon, then the leader of that will be shown in the company
+
+            return redirect()->route('join.index')->with('status', 'Welcome to '. $soldier->squad->platoon->company->name .' '. $soldier->squad->platoon->name .' '. $soldier->squad->name .' squad!');
+        }     
+
+        return redirect()->route('join.index')->with('status', 'Failed to join squad!');
     }
 
     /**

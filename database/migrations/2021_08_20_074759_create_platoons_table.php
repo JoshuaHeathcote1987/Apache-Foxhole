@@ -16,7 +16,7 @@ class CreatePlatoonsTable extends Migration
         Schema::create('platoons', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('soldier_id')->nullable(); // leader
+            $table->unsignedBigInteger('leader_id')->nullable(); // leader
             $table->string('name');
             $table->timestamps();
             $table->foreign('company_id')

@@ -9,6 +9,11 @@ class Platoon extends Model
 {
     use HasFactory;
 
+    public function leader()
+    {
+        return $this->hasOne(Soldier::class);
+    }
+
     public function squads()
     {
         return $this->hasMany(Squad::class);

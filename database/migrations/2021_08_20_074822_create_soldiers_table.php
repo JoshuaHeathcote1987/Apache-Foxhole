@@ -16,7 +16,6 @@ class CreateSoldiersTable extends Migration
         Schema::create('soldiers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('squad_id');
-            $table->unsignedBigInteger('user_id');
             $table->string('game_name');
             $table->string('steam_id')->nullable();;
             $table->string('instagram')->nullable();;
@@ -27,10 +26,6 @@ class CreateSoldiersTable extends Migration
             $table->foreign('squad_id')
                 ->references('id')
                 ->on('squads')
-                ->onDelete('cascade');
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
                 ->onDelete('cascade');
         });
     }

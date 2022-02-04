@@ -2,34 +2,27 @@
 
 namespace App\Models;
 
-use App\Models\Soldier;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Vote extends Model
+class Percentage extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'soldier_id',
         'category',
-        'voting_soldier_id',
-        'voted_soldier_id',
+        'percentage',
+        'count',
     ];
 
-    public function voting_soldier()
+    public function soldier()
     {
         return $this->belongsTo(Soldier::class);
     }
 
-    public  function voted_soldier()
+    public function percentages() 
     {
         return $this->belongsTo(Soldier::class);
-    }
-
-    public function vote()
-    {
-        return $this->belongsTo(Soldier::class, 'id', 'voted_soldier_id');
-        
     }
 }
