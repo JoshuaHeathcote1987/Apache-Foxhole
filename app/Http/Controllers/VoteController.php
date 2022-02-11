@@ -97,6 +97,28 @@ class VoteController extends Controller
                             $leader = $leader->values();
                             $squad_leader = Soldier::find($leader[0]['soldier']['id']);
                             $update_squad = Squad::find($squad_leader->squad_id);
+
+                            // Reset Vote on Squad Lead Platoon Vote
+                            // Check to see if the current max (new) squad leader is equal to the previous one, if 
+                            // not then the previous vote will be deleted, if true, then the vote won't be touch
+                            if ($voted_soldier->id != $squad_leader->id) 
+                            {
+                                // Its important to take into account that when all vote's are equal among the squad, then 
+                                // the first member in the squad is crowned squad leader.
+                                $remove_vote = Vote::where('category', '=', 'platoon')
+                                    ->where('voted_soldier_id', '=', $voted_soldier->id);
+
+                                $remove_vote->delete();
+
+                                $create_vote = new Vote;
+                                $create_vote->category = 'platoon';
+                                $create_vote->voting_soldier_id = $voting_soldier->id;
+                                $create_vote->voted_soldier_id = $voted_soldier->id;
+
+                                // Becareful here, really think hard about this, because you will have to run the platoon tally, max, percentage here as well, not a problem but you should refactor.
+                                // For now just start with the vote on the blade.view.
+                            }
+
                             $update_squad->leader_id = $squad_leader->id;
                             $update_squad->save();
 
@@ -121,6 +143,10 @@ class VoteController extends Controller
                                 );
                             }
 
+                            // Reset the platoon vote
+                            
+
+
                             return redirect()->route('vote.index')->with('status', 'Vote successful!');
                         }     
                         return redirect()->route('vote.index')->with('status', 'Vote failed! Failed to update');
@@ -130,7 +156,8 @@ class VoteController extends Controller
                 break;
 
             case 'platoon':
-
+                    $voting_soldier = Soldier::find($request->voting_soldier_id);
+                    $voted_soldier = Soldier::find($request->voted_soldier_id);
                 break;
 
             case 'company':

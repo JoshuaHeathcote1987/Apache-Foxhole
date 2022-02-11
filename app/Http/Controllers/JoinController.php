@@ -52,29 +52,104 @@ class JoinController extends Controller
     public function store(Request $request)
     {
         $user = User::find(\Auth::id());
+                                      
+        // CREATE A NEW SOLDIER IF ONE DOES NOT EXIST
+        try 
+        {
+            $squad = Squad::find($user->soldier->squad_id);                         // previous squad   
+        } 
+        catch (\Throwable $th) 
+        {
+            $soldier = Soldier::updateOrCreate(                                     // This soldier is created with reference to the new squad
+                [
+                    'game_name' => $user->game_name,
+                ],
+                [
+                    'squad_id'  => $request->squad_id,
+                    'game_name' => $user->game_name,
+                ]
+            );
 
-        // THIS IS THE PROBLEM :: You have a problem where if a squad leader leaves the squad, the squad leader isn't updated in the squad table
-
-        // Check to see if the current soldier change is squad leader.
-        $old_squad_leader_id = $user->soldier->squad->leader_id;
-        if ($user->solider->id == $old_squad_leader_id) {
-            dd('You are here');
+            $user->soldier_id = $soldier->id;                                           // The user is linked to the newly created soldier here
+            $user->save();
         }
-        // If he is squad leader then perform these actions
 
-        // Delete his percentage
-        // Run tally on the squad that he left
-        // Run max on the squad that he left
-        // Update squad table with the new current squad leader
-        // Run percentage on squad that he left
-        
+        // Change the soldiers squad to the new one
+        $soldier = Soldier::updateOrCreate(
+            [
+                'game_name' => $user->game_name,
+            ],
+            [
+                'squad_id'  => $request->squad_id,
+                'game_name' => $user->game_name,
+            ]
+        );
 
-        
+        // Updating the old squad table for new squad leader, tally, max percentages
+        try {
+            // 0 Check to see if the leader is set or is the same
+            if ($user->soldier->id == $user->soldier->squad->leader_id)                
+            {
+                // 1 Get the old Squad, and set leader to null
+                $squad->leader_id = null;
+                $squad->save();
 
+                // 2 Grab the soldiers in the squad
+                $soldiers = $squad->soldiers;
+                
+                
 
+                if (count($soldiers) > 0) {
+                    // 3 Fill the Tally collect
+                    $tallied = collect();
+                        
+                    foreach ($soldiers as $soldier) {
+                        $count = $soldier->votes->count();
+                        $tallied->push(['soldier' => $soldier, 'count' => $count]);
+                    }
 
+                    // 4 Grab the max Tally
+                    $max = $tallied->max('count');
 
-        // Tally, Max, Percentage Calculation
+                    // 6 Update the previous squad table with the new squad leader 
+                    $leader = $tallied->where('count', '=', $max);
+                    $leader = $leader->values();
+                    $squad_leader = Soldier::find($leader[0]['soldier']['id']);
+                    $squad->leader_id = $squad_leader->id;
+                    $squad->save();
+
+                    // 7 Calculate the percentages
+                    $percentages = collect();
+
+                    foreach ($tallied as $tally) {
+                        if ($tally['count'] != 0) {
+                            $percentage = ($tally['count'] / $max) * 100;
+                            $percentages->push(['soldier_id' => $tally['soldier']['id'], 'category' => 'squad', 'percent' => $percentage, 'count' => $tally['count']]);
+                        } else {
+                            $percentages->push(['soldier_id' => $tally['soldier']['id'], 'category' => 'squad', 'percent' => 0, 'count' => 0]); 
+                        }
+                    }
+                    
+                    // 8 Update the percentage table
+                    foreach ($percentages as $percentage) {
+                        $update = Percentage::updateOrCreate(
+                            [
+                                'soldier_id' => $percentage['soldier_id'],
+                                'category' => 3,
+                            ],
+                            [
+                                'percentage' => $percentage['percent'],
+                                'count' => $percentage['count'],
+                            ]
+                        );
+                    }
+                }
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+        // Update new squad table data
         $soldier = Soldier::updateOrCreate(
             [
                 'game_name' => $user->game_name,
@@ -89,14 +164,13 @@ class JoinController extends Controller
         $user->save();
 
         $update = Vote::updateOrCreate(
-            ['category' => 'squad', 'voting_soldier_id' => $user->soldier->id],
-            ['voted_soldier_id' => $user->soldier->id],
+            ['category' => 'squad', 'voting_soldier_id' => $user->soldier_id],
+            ['voted_soldier_id' => $user->soldier_id],
         );
 
         if ($update) {
 
             // Tally the Votes
-            $votes = Vote::where('category', '=', 'squad')->get();
             $soldiers = Soldier::where('squad_id', '=', $soldier->squad_id)->get();
             
             $tallied = collect();
@@ -116,6 +190,7 @@ class JoinController extends Controller
             $update_squad = Squad::find($squad_leader->squad_id);
             $update_squad->leader_id = $squad_leader->id;
             $update_squad->save();
+
 
             $percentages = collect();
 
@@ -137,10 +212,7 @@ class JoinController extends Controller
                     ]
                 );
             }
-
-
-            // READ THIS In the vote and the join section, you have to make it so that all percentage have another vote created for platoon, then the leader of that will be shown in the company
-
+            
             return redirect()->route('join.index')->with('status', 'Welcome to '. $soldier->squad->platoon->company->name .' '. $soldier->squad->platoon->name .' '. $soldier->squad->name .' squad!');
         }     
 

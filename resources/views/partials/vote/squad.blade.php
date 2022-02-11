@@ -91,7 +91,19 @@
                                                             <td>{{ $squad->leader->id }}</td>
                                                             <td>{{ $squad->leader->game_name }}</td>
                                                             <td>{{ $squad->name}}</td>
-                                                            <td>button here</td>
+                                                            <td>
+                                                                <form action="{{ route('vote.store') }}"
+                                                                method="post">
+                                                                @csrf
+                                                                <input type="hidden" name="category" value="1">
+                                                                <input type="hidden" name="voting_soldier_id"
+                                                                    value="{{ \Auth::id() }}">
+                                                                <input type="hidden" name="voted_soldier_id"
+                                                                    value="{{ $squad->leader->id }}">
+                                                                <button type="submit"
+                                                                    class="btn btn-success">🗳️</button>
+                                                                </form>
+                                                        </td>
                                                             <td>progress bar here</td>
                                                         </tr>
                                                     @endif
