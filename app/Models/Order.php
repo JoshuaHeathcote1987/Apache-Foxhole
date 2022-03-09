@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\Soldier;
+
 class Order extends Model
 {
     use HasFactory;
@@ -15,6 +17,13 @@ class Order extends Model
         'body',
         'image', 
     ];
+
+    // Checks whether the person making the order has authority.
+    public static function check(Soldier $soldier)
+    {
+        // opt being the option of which heirarchy you are checking, sqaud, platoon, company.
+        $option = $opt;
+    }
 
     public static function time_elapsed_string($datetime, $full = false) {
         $now = now();

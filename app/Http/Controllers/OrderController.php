@@ -56,9 +56,11 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $user = \Auth::user();
-        $companies = Company::all();
-        
-        if ($request->platoon_id == $user->id) {
+        $platoon_id = $request->platoon_id;
+        $platoon = Platoon::find($platoon_id);
+        $company_leader_id = $platoon->company->leader_id;
+
+        if ($user->soldier->id == $company_leader_id) {
             $order = Order::create([
                 'platoon_id' => $request->platoon_id,
                 'head' => $request->head,

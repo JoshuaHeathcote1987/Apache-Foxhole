@@ -11,7 +11,7 @@ class Company extends Model
 
     public function leader()
     {
-        return $this->hasOne(Soldier::class);
+        return $this->hasOne(Soldier::class, 'id', 'leader_id');
     }
 
     public function platoons()

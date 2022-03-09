@@ -52,15 +52,15 @@ class JoinController extends Controller
     public function store(Request $request)
     {
         $user = User::find(\Auth::id());
-                                      
+                      
         // CREATE A NEW SOLDIER IF ONE DOES NOT EXIST
         try 
         {
-            $squad = Squad::find($user->soldier->squad_id);                         // previous squad   
+            $squad = Squad::find($user->soldier->squad_id);                                     // previous squad   
         } 
         catch (\Throwable $th) 
         {
-            $soldier = Soldier::updateOrCreate(                                     // This soldier is created with reference to the new squad
+            $soldier = Soldier::updateOrCreate(                                                 // This soldier is created with reference to the new squad
                 [
                     'game_name' => $user->game_name,
                 ],
@@ -70,7 +70,7 @@ class JoinController extends Controller
                 ]
             );
 
-            $user->soldier_id = $soldier->id;                                           // The user is linked to the newly created soldier here
+            $user->soldier_id = $soldier->id;                                                   // The user is linked to the newly created soldier here
             $user->save();
         }
 
@@ -135,7 +135,7 @@ class JoinController extends Controller
                         $update = Percentage::updateOrCreate(
                             [
                                 'soldier_id' => $percentage['soldier_id'],
-                                'category' => 3,
+                                'category' => 'squad',
                             ],
                             [
                                 'percentage' => $percentage['percent'],
@@ -191,6 +191,18 @@ class JoinController extends Controller
             $update_squad->leader_id = $squad_leader->id;
             $update_squad->save();
 
+            // Check to see if the user is still a squad leader, if not delete the percentage
+            if (isset($percentage_delete)) {
+                $percentage_delete = Percentage::where('soldier_id', '=', $user->soldier->id)
+                    ->where('category', '=', 'platoon');
+                $percentage_delete->delete();
+            }
+
+            if (isset($squad_delete)) {
+                $squad_delete = Percentage::where('soldier_id', '=', $user->soldier->id)
+                    ->where('category', '=', 'squad');
+                $squad_delete->delete();
+            }
 
             $percentages = collect();
 
@@ -204,7 +216,7 @@ class JoinController extends Controller
                 $update = Percentage::updateOrCreate(
                     [
                         'soldier_id' => $percentage['soldier_id'],
-                        'category' => 3,
+                        'category' => 'squad',
                     ],
                     [
                         'percentage' => $percentage['percent'],

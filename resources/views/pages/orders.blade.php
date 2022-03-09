@@ -23,7 +23,7 @@
             <div class="accordion big-margin-bottom" id="accordionPanelsStayOpenExample">
                 @foreach ($data['companies'] as $company)
                     <div class="accordion-item">
-                        <h2 class="accordion-header" id="panelsStayOpen-heading{{ $company->id }}">
+                        <h2 class="accordion-header" id="{{ $company->name }}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#panelsStayOpen-collapse{{ $company->id }}" aria-expanded="false"
                                 aria-controls="panelsStayOpen-collapse{{ $company->id }}">
@@ -31,141 +31,85 @@
                             </button>
                         </h2>
                         <div id="panelsStayOpen-collapse{{ $company->id }}" class="accordion-collapse collapse"
-                            aria-labelledby="panelsStayOpen-heading{{ $company->id }}">
+                            aria-labelledby="{{ $company->name }}">
                             <div class="accordion-body">
 
-                                @switch($company->id)
-                                    @case(1)
-                                        <div class="accordion" id="accordionPanelsStayOpenExample">
-                                            @foreach ($data['platoons'] as $platoon)
-                                                @if ($platoon->company_id === $company->id)
-                                                    <div class="accordion-item">
-                                                        <h2 class="accordion-header"
-                                                            id="panelsStayOpen-heading{{ $platoon->id * 3 }}">
-                                                            <button class="accordion-button collapsed" type="button"
-                                                                data-bs-toggle="collapse"
-                                                                data-bs-target="#panelsStayOpen-collapse{{ $platoon->id * 3 }}"
-                                                                aria-expanded="false"
-                                                                aria-controls="panelsStayOpen-collapse{{ $platoon->id * 3 }}">
-                                                                {{ $platoon->name }}
-                                                            </button>
-                                                        </h2>
-                                                        <div id="panelsStayOpen-collapse{{ $platoon->id * 3 }}"
-                                                            class="accordion-collapse collapse"
-                                                            aria-labelledby="panelsStayOpen-heading{{ $platoon->id * 3 }}">
-                                                            <div class="accordion-body">
-                                                                <ul class="nav">
-                                                                    <li class="nav-item">
-                                                                        <a class="nav-link" type="button"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#createOrderModal{{ $platoon->id }}">
-                                                                            ✍🏻 Create Order
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a class="nav-link" type="button"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#viewOrdersModal">
-                                                                            📒 View Orders
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                                <table class="table table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th scope="col">#</th>
-                                                                            <th scope="col">Date</th>
-                                                                            <th scope="col">Head</th>
-                                                                            <th scope="col">Body</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        @foreach ($data['orders'] as $order)
-                                                                            @if ($order->platoon_id == $platoon->id)
-                                                                                <tr>
-                                                                                    <th scope="row">{{ $order->id }}</th>
-                                                                                    <td>{{ $order->created_at }}</td>
-                                                                                    <td>{{ $order->head }}</td>
-                                                                                    <td>{{ $order->body }}</td>
-                                                                                </tr>
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                    @break
-                                    @case(2)
-                                        <div class="accordion" id="accordionPanelsStayOpenExample">
-                                            @foreach ($data['platoons'] as $platoon)
-                                                @if ($platoon->company_id === $company->id)
-                                                    <div class="accordion-item">
-                                                        <h2 class="accordion-header"
-                                                            id="panelsStayOpen-heading{{ $platoon->id * 4 }}">
-                                                            <button class="accordion-button collapsed" type="button"
-                                                                data-bs-toggle="collapse"
-                                                                data-bs-target="#panelsStayOpen-collapse{{ $platoon->id * 4 }}"
-                                                                aria-expanded="false"
-                                                                aria-controls="panelsStayOpen-collapse{{ $platoon->id * 4 }}">
-                                                                {{ $platoon->name }}
-                                                            </button>
-                                                        </h2>
-                                                        <div id="panelsStayOpen-collapse{{ $platoon->id * 4 }}"
-                                                            class="accordion-collapse collapse"
-                                                            aria-labelledby="panelsStayOpen-heading{{ $platoon->id * 4 }}">
-                                                            <div class="accordion-body">
-                                                                <ul class="nav">
-                                                                    <li class="nav-item">
-                                                                        <a class="nav-link" type="button"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#createOrderModal{{ $platoon->id }}">
-                                                                            ✍🏻 Create Order
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a class="nav-link" type="button"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#viewOrdersModal">
-                                                                            📒 View Orders
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                                <table class="table table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th scope="col">#</th>
-                                                                            <th scope="col">Date</th>
-                                                                            <th scope="col">Head</th>
-                                                                            <th scope="col">Body</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        @foreach ($data['orders'] as $order)
-                                                                            @if ($order->platoon_id == $platoon->id)
-                                                                                <tr>
-                                                                                    <th scope="row">{{ $order->id }}</th>
-                                                                                    <td>{{ $order->created_at }}</td>
-                                                                                    <td>{{ $order->head }}</td>
-                                                                                    <td>{{ $order->body }}</td>
-                                                                                </tr>
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </tbody>
-                                                                </table>
+                                @if (false)
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Head</th>
+                                                <th scope="col">Body</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                @else
+                                    <p class="text-center">No data</p>
+                                @endif
 
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            @endforeach
+                                <div class="accordion" id="accordionPanelsStayOpenExample">
+                                    @foreach ($company->platoons as $index => $platoon)
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header"
+                                                id="panelsStayOpen-heading{{ $platoon->id * 3 }}">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#panelsStayOpen-collapse{{ $platoon->id * 3 }}"
+                                                    aria-expanded="false"
+                                                    aria-controls="panelsStayOpen-collapse{{ $platoon->id * 3 }}">
+                                                    {{ $platoon->name }}
+                                                </button>
+                                            </h2>
+                                            <div id="panelsStayOpen-collapse{{ $platoon->id * 3 }}"
+                                                class="accordion-collapse collapse"
+                                                aria-labelledby="panelsStayOpen-heading{{ $platoon->id * 3 }}">
+                                                <div class="accordion-body">
+                                                    <ul class="nav">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" type="button" data-bs-toggle="modal"
+                                                                data-bs-target="#createOrderModal{{ $platoon->id * 3 }}">
+                                                                ✍🏻 Create Order
+                                                            </a>
+                                                        </li>
+       
+                                                    </ul>
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">Date</th>
+                                                                <th scope="col">Head</th>
+                                                                <th scope="col">Body</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($data['orders'] as $order)
+                                                                @if ($order->platoon_id == $platoon->id)
+                                                                    <tr>
+                                                                        <th scope="row">{{ $order->id }}</th>
+                                                                        <td>{{ $order->created_at }}</td>
+                                                                        <td>{{ $order->head }}</td>
+                                                                        <td>{{ $order->body }}</td>
+                                                                    </tr>
+                                                                @endif
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
-                                    @break
-                                    @default
-                                @endswitch
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -174,16 +118,18 @@
         </div>
     </div>
 
-    @foreach ($data['platoons'] as $platoon)
+
+
+    @foreach ($data['companies'] as $company)
         <form action="/orders" method="post">
             @csrf
-            <input type="hidden" name="platoon_id" value="{{ $platoon->id }}">
-            <div class="modal fade" id="createOrderModal{{ $platoon->id }}" tabindex="-1" data-bs-backdrop="static"
+            <input type="hidden" name="company_id" value="{{ $company->id }}">
+            <div class="modal fade" id="createOrderModal{{ $company->id }}" tabindex="-1" data-bs-backdrop="static"
                 data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">{{ $platoon->name }}</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">{{ $company->name }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
@@ -206,42 +152,115 @@
                 </div>
             </div>
         </form>
-    @endforeach
 
-    <div class="modal fade" id="viewOrdersModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">All Orders</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Platoon</th>
-                                <th scope="col">Head</th>
-                                <th scope="col">Body</th>
-                                <th scope="col">Created</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($data['orders'] as $order)
+        <div class="modal fade" id="viewOrdersModal{{ $company->id }}" tabindex="-1" data-bs-backdrop="static"
+            data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">All Orders</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td>{{ $order->platoon_id }}</td>
-                                    <td>{{ $order->head }}</td>
-                                    <td>{{ $order->body }}</td>
-                                    <td>{{ $order->created_at }}</td>
+                                    <th scope="col">Platoon</th>
+                                    <th scope="col">Head</th>
+                                    <th scope="col">Body</th>
+                                    <th scope="col">Created</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </thead>
+                            <tbody>
+                                @foreach ($data['orders'] as $order)
+                                    <tr>
+                                        <td>{{ $order->platoon_id }}</td>
+                                        <td>{{ $order->head }}</td>
+                                        <td>{{ $order->body }}</td>
+                                        <td>{{ $order->created_at }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        @foreach ($company->platoons as $platoon)
+            <form action="/orders" method="post">
+                @csrf
+                <input type="hidden" name="platoon_id" value="{{ $platoon->id }}">
+                <div class="modal fade" id="createOrderModal{{ $platoon->id * 3 }}" tabindex="-1"
+                    data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">{{ $platoon->name }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-floating mb-3">
+                                    <input name="head" type="text" class="form-control" id="floatingInput">
+                                    <label for="floatingInput">Head</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <textarea name="body" class="form-control" id="exampleFormControlTextarea1"
+                                        rows="8"></textarea>
+                                    <label for="floatingInput">Body</label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="modal fade" id="viewOrdersModal{{ $platoon->id }}" tabindex="-1" data-bs-backdrop="static"
+                data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">All Orders</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Platoon</th>
+                                        <th scope="col">Head</th>
+                                        <th scope="col">Body</th>
+                                        <th scope="col">Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($data['orders'] as $order)
+                                        <tr>
+                                            <td>{{ $order->platoon_id }}</td>
+                                            <td>{{ $order->head }}</td>
+                                            <td>{{ $order->body }}</td>
+                                            <td>{{ $order->created_at }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @endforeach
 @endsection
